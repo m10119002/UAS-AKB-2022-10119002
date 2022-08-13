@@ -1,6 +1,7 @@
 package com.m10119002.uasAKB2022;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -28,6 +29,7 @@ public class TentangActivity extends FragmentActivity {
     private static final int NUM_PAGES = 3;
     private int pos;
     private boolean isFinalPage;
+    private Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +49,29 @@ public class TentangActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_tentang);
 
+        btn = findViewById(R.id.tentang_button);
+
         viewPager = findViewById(R.id.tentang_pager2);
         pagerAdapter = new TentangPagerAdapter(this);
         viewPager.setAdapter(pagerAdapter);
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                pos = position;
+                doFinalPageCheck();
+            }
+        });
+    }
+
+    public void doFinalPageCheck() {
+        if (this.pos == (mFragTentangList.size()-1)) {
+            this.btn.setText("DONE");
+            isFinalPage = true;
+        } else {
+            this.btn.setText("NEXT");
+            isFinalPage = false;
+        }
     }
 
     public void nextTentang(View view) {
@@ -60,12 +82,7 @@ public class TentangActivity extends FragmentActivity {
             finish();
         } else {
             pos+= 1;
-            if (pos == (mFragTentangList.size()-1)) {
-                btn.setText("DONE");
-                isFinalPage = true;
-            } else {
-                btn.setText("NEXT");
-            }
+            doFinalPageCheck();
             viewPager.setCurrentItem(pos);
         }
     }
